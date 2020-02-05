@@ -1,0 +1,148 @@
+头文件
+#pragma once
+#include<iostream>
+#include<vector>
+using namespace std;
+
+struct Node
+{
+	int val;
+	Node* left;
+	Node* right;
+	Node(int val)
+	{
+		this->val=val;
+		left=NULL;
+		right=NULL;
+	}
+};
+class BTree
+{
+	Node *root;
+public:
+	Node* getroot();
+	void buildBTree(vector<int>&a);
+	void inOrder(Node *root);//中序遍历
+	void layerOrder(Node* root);//层次遍历
+	void layerOrderenl(Node* root);//层次遍历+换行
+};
+函数包
+#include"Btree.h"
+Node *BTree::getroot()
+{
+	return root;
+}
+void BTree::buildBTree(vector<int> &a)
+{
+	if(a.size()==0)
+	{
+		root=NULL;
+		return;
+	}
+	root=new Node(a[0]);
+	for(int i=1;i<a.size();i++)
+	{
+		Node* node=new Node(a[i]);
+		Node* tmproot=root;
+		while(1)
+		{
+			if(tmproot->val<a[i])
+			{
+				if(tmproot->right==NULL)
+				{
+					tmproot->right=node;
+					break;
+				}
+				tmproot=tmproot->right;
+			}
+			else
+			{
+				if(tmproot->left==NULL)
+				{
+					tmproot->left=node;
+					break;
+				}
+				tmproot=tmproot->left;
+			}
+		}
+	}
+}
+void BTree::inOrder(Node* root)
+{
+	if(root==NULL)
+		return;
+	inOrder(root->left);
+	cout<<root->val<<" ";
+	inOrder(root->right);
+}
+void BTree::layerOrder(Node* root)
+{
+	if(root==NULL)
+		return;
+	//压入根节点
+	queue<Node*>que;
+	que.push(root);
+	//队列不为空
+	while(!que.empty())
+	{
+		Node* tmp=que.front();
+		cout<<tmp->val<<" ";
+		que.pop();
+		if(tmp->left)
+		{
+			que.push(tmp->left);
+		}
+		if(tmp->right)
+		{
+			que.push(tmp->right);
+		}
+	}
+}
+void BTree::layerOrderenl(Node* root)
+{
+	if(root==NULL)
+		return;
+	//压入根节点
+	queue<Node*>que;
+	que.push(root);
+	Node* last=root;
+	Node *nlast=NULL;
+	//队列不为空
+	while(!que.empty())
+	{
+		Node* tmp=que.front();
+		cout<<tmp->val<<" ";
+		que.pop();
+		if(tmp->left)
+		{
+			que.push(tmp->left);
+			nlast=tmp->left;
+		}
+		if(tmp->right)
+		{
+			que.push(tmp->right);
+			nlast=tmp->right;
+		}
+		if(tmp==last)
+		{
+			last=nlast;
+			cout<<endl;
+		}
+	}
+}
+实现
+#include<iostream>
+#include<vector>
+#include"Btree.h"
+using namespace std;
+
+int main()
+{
+	int a[]={5,3,1,6,8,9,7,2,4};
+	vector<int> arr (a,a+9);
+	BTree bt;
+	bt.buildBTree(arr);
+	Node* root=bt.getroot();
+	bt.inOrder(root);
+	return 0;
+}
